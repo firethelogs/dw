@@ -15,6 +15,7 @@ async def download_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'format': 'best[ext=mp4]',
         'outtmpl': 'downloads/%(title)s.%(ext)s',
         'quiet': True,
+        'cookiefile': 'cookies.txt',  # 👈 Use login cookies to bypass restrictions
     }
 
     try:
@@ -23,9 +24,8 @@ async def download_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
             file_path = ydl.prepare_filename(info)
             await update.message.reply_video(video=open(file_path, 'rb'))
             os.remove(file_path)
-
     except Exception as e:
-        await update.message.reply_text(f"Error: {e}")
+        await update.message.reply_text(f"❌ Error: {e}")
 
 if __name__ == '__main__':
     os.makedirs("downloads", exist_ok=True)
@@ -35,5 +35,5 @@ if __name__ == '__main__':
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, download_video))
 
-    print("Bot running...")
+    print("🤖 Bot is running...")
     app.run_polling()
